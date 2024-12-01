@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+
+
+
+{
+  "users": {
+    "ahmed": {
+      "password": "1987",
+      "status": "active"
+    },
+    "mohamed": {
+      "password": "1980",
+      "status": "inactive"
+    },
+    "mustafa": {
+      "password": "1954",
+      "status": "active"
+    }
+  }
+}

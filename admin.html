@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المدير</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom right, #030683, #26c6dac1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+    overflow: hidden;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 10px rgba(224,8,8,0.773);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+.container:hover {
+    transform: scale(1.02);
+}
+
+h1 {
+    text-align: center;
+    color: #fff600;
+    text-shadow: 0 2px 5px rgba(245,6,6,0.8);
+    margin-bottom: 5px;
+    font-size: 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 440px; /* تحديد الحد الأقصى للارتفاع */
+    display: block;
+    overflow-y: auto; /* تمكين التمرير العمودي */
+}
+
+th, td {
+    border: 1px solid #111;
+    text-align: center;
+    padding: 7.2px;
+    font-size: 0.9rem;
+}
+
+th {
+    background: #2980b9;
+    color: #fff600;
+}
+
+td {
+    background: rgba(43, 120, 170, 0.7);
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.edit-btn {
+    background: #3498db;
+    color: #fff;
+}
+
+.active-btn {
+    background: #2ecc71;
+    color: #fff;
+}
+
+.inactive-btn {
+    background: #e67e22;
+    color: #fff;
+}
+
+.add-btn, .logout-btn {
+    width: 100%;
+    max-width: 150px;
+    margin: 5px auto;
+    color: #fff;
+}
+
+.add-btn {
+    background: #2ecc71;
+}
+
+.logout-btn {
+    background: #34495e;
+}
+
+.header {
+    text-align: center;
+    background: #2c3e50;
+    padding: 15px;
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* تصميم زر التبديل */
+.toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 65px;
+        height: 35px;
+    }
+
+    .toggle-switch input {
+        display: none; /* إخفاء مربع الاختيار الافتراضي */
+    }
+
+    .toggle-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: red;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: 0.4s;
+    }
+
+    .toggle-label:before {
+        content: "OFF";
+        position: absolute;
+        left: 32px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13.5px;
+        color: white;
+        transition: 0.4s;
+    }
+
+    .toggle-switch input:checked + .toggle-label {
+        background-color: #4caf50;
+    }
+
+    .toggle-switch input:checked + .toggle-label:before {
+        content: "ON";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13.5px;
+        color: white;
+        transition: 0.4s;
+    }
+
+    .toggle-label:after {
+        content: '';
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        left: 5px;
+        bottom: 5px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+    }
+
+    .toggle-switch input:checked + .toggle-label:after {
+        transform: translateX(30px);
+    }
+
+/* تحسين تجربة الأجهزة المحمولة */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    button {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+}
+
+        /* رسائل الخطأ */
+        .error {
+            color: red;
+            font-size: 13px;
+            display: none;
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+ <div class="container">
+    <div class="header">
+        <h1>قائمة الموظفين</h1>
+    </div>
+    <div class="button-container">
+        <button class="add-btn" onclick="addEmployee()"><i class="fas fa-user-plus"></i> إضافة موظف جديد</button>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>اسم المستخدم</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTable"></tbody>
+    </table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+    import { getDatabase, ref, get, set, remove, update } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBVD6BwwCMAmuVFf5ip-H-J6NdhX2k_1k0",
+        authDomain: "storage-1-84b28.firebaseapp.com",
+        databaseURL: "https://storage-1-84b28-default-rtdb.firebaseio.com",
+        projectId: "storage-1-84b28",
+        storageBucket: "storage-1-84b28.firebasestorage.app",
+        messagingSenderId: "681051266815",
+        appId: "1:681051266815:web:03d077b10527af649b76ca"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+// وظيفة toastr لإظهار الأخطاء
+function showError(message) {
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-center",
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "3000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut"
+    };
+    toastr.error(message);
+}
+
+// تحميل الموظفين
+async function loadEmployees() {
+    try {
+        const dbRef = ref(database, 'users/');
+        const snapshot = await get(dbRef);
+        const tableBody = document.getElementById('employeeTable');
+        tableBody.innerHTML = ''; // تنظيف الجدول
+
+        if (snapshot.exists()) {
+            const employees = snapshot.val();
+            Object.entries(employees).forEach(([username, data]) => {
+                if (data.role === 'employee') {
+                    createEmployeeRow(username, data, tableBody);
+                }
+            });
+        } else {
+            showError('لا توجد بيانات متاحة في قاعدة البيانات');
+        }
+    } catch (error) {
+        showError('حدث خطأ أثناء تحميل الموظفين: ' + error.message);
+    }
+}
+
+// إنشاء صف الموظف
+function createEmployeeRow(username, data, tableBody) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${username}</td>
+        <td>${data.status === 'active' ? 'نشط' : 'غير نشط'}</td>
+        <td>
+            <button class="edit-btn" onclick="editEmployee('${username}')">
+                <i class="fas fa-edit"></i> تعديل
+            </button>
+            <button class="delete-btn" onclick="confirmDelete('${username}')">
+                <i class="fas fa-trash-alt"></i> حذف
+            </button>
+            <div class="toggle-switch">
+                <input type="checkbox" id="toggleStatus-${username}" 
+                    onclick="toggleStatus('${username}', '${data.status}')"
+                    ${data.status === 'active' ? 'checked' : ''}>
+                <label for="toggleStatus-${username}" class="toggle-label"></label>
+            </div>
+        </td>
+    `;
+    tableBody.appendChild(row);
+    updateButtonColor(username, data.status);
+}
+
+// إضافة موظف جديد
+async function addEmployee() {
+    const username = prompt("أدخل اسم المستخدم الجديد:").trim();
+    const password = prompt("أدخل كلمة المرور الجديدة:").trim();
+
+    if (username && password) {
+        try {
+            const userRef = ref(database, `users/${username}`);
+            await set(userRef, { password, role: 'employee', status: 'active' });
+            toastr.success(`تم إضافة الموظف ${username}`);
+            loadEmployees();
+        } catch (error) {
+            showError('حدث خطأ أثناء إضافة الموظف: ' + error.message);
+        }
+    } else {
+        toastr.warning("اسم المستخدم وكلمة المرور مطلوبان.");
+    }
+}
+
+// تعديل بيانات الموظف
+async function editEmployee(username) {
+    const newUsername = prompt(`أدخل اسم المستخدم الجديد لـ ${username}:`).trim();
+    const newPassword = prompt(`أدخل كلمة المرور الجديدة لـ ${username}:`).trim();
+
+    if (newUsername && newPassword) {
+        try {
+            const userRef = ref(database, `users/${username}`);
+            const userData = (await get(userRef)).val();
+            await remove(userRef);
+            await set(ref(database, `users/${newUsername}`), { ...userData, password: newPassword });
+            toastr.success(`تم تحديث بيانات ${username}`);
+            loadEmployees();
+        } catch (error) {
+            showError('حدث خطأ أثناء تعديل الموظف: ' + error.message);
+        }
+    } else {
+        toastr.warning("اسم المستخدم وكلمة المرور الجديدان مطلوبان.");
+    }
+}
+
+// تبديل حالة الموظف
+async function toggleStatus(username, currentStatus) {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    try {
+        const userRef = ref(database, `users/${username}`);
+        await update(userRef, { status: newStatus });
+        toastr.success(`تم تحديث حالة ${username} إلى ${newStatus === 'active' ? 'نشط' : 'موقوف'}`);
+        loadEmployees();
+    } catch (error) {
+        showError('حدث خطأ أثناء تحديث الحالة: ' + error.message);
+    }
+}
+
+// تحديث لون زر الحالة
+function updateButtonColor(username, status) {
+    const button = document.querySelector(`#toggleStatus-${username}`);
+    if (button) {
+        if (status === 'active') {
+            button.classList.remove('inactive-btn');
+            button.classList.add('active-btn');
+        } else {
+            button.classList.remove('active-btn');
+            button.classList.add('inactive-btn');
+        }
+    }
+}
+
+// تأكيد وحذف الموظف
+async function confirmDelete(username) {
+    const confirmation = confirm(`هل أنت متأكد أنك تريد حذف المستخدم ${username}?`);
+    if (confirmation) {
+        try {
+            const userRef = ref(database, `users/${username}`);
+            await remove(userRef);
+            toastr.success(`تم حذف المستخدم ${username} بنجاح!`);
+            loadEmployees();
+        } catch (error) {
+            showError('حدث خطأ أثناء حذف الموظف: ' + error.message);
+        }
+    }
+}
+
+// تسجيل الخروج
+function logout() {
+    toastr.info('تم تسجيل الخروج بنجاح!');
+    window.location.href = 'index.html';
+}
+
+// تحميل الموظفين عند تحميل الصفحة
+window.onload = loadEmployees;
+
+// ربط الدوال بالمكونات
+window.editEmployee = editEmployee;
+window.toggleStatus = toggleStatus;
+window.confirmDelete = confirmDelete;
+window.addEmployee = addEmployee;
+window.logout = logout;
+   </script>
+</body>
+</html>

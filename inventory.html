@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أجزاء السيارات مصطفى</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://pmlg.netlify.app/background0.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: red;
+            overflow-x: hidden; /* لمنع التمرير الأفقي */
+        }
+
+        /* الحاوية الزمنية */
+        .datetime-container {
+            position: fixed;
+            top: 1.5px;
+            right: 2px;
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 8px 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #datetime {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* تحسين الحاوية الرئيسية */
+        .container {
+            background-color: rgba(255,255,255,0.264);
+            padding: 20px;
+            margin: 10px auto;
+            border-radius: 20px;
+            max-width: 1200px;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تحسين الرأس */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            height: 87px;
+        }
+
+        h1 {
+            text-align: center;
+            flex-grow: 10;
+            font-size: 25px;
+            margin: 0;
+            color: red;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* تحسين التبويبات */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 8px 10px;
+            margin: 0 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            display: inline-block;
+        }
+
+        .tab:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        .tab.active {
+            background-color: #388E3C;
+        }
+
+        /* تحسين المحتوى */
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* تحسين الجدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255,255,255,0.259);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            table-layout: fixed;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #111;
+            padding: 5px;
+            text-align: center;
+            color: #ffffff;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: red;
+            color: yellow;
+        }
+
+        .product-image {
+            height: 150px;
+            width: 65px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* تحسين النماذج */
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label, input {
+            margin-bottom: 10px;
+            padding: 7px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 15px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 5px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* تحسين البحث */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #search-input {
+            padding: 10px;
+            font-size: 15px;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin-right: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        #search-input:focus {
+            border-color: #45a049;
+        }
+
+        #search-button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            font-size: 15px;
+        }
+
+        #search-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* تحسين زر الإغلاق */
+        .closeButton {
+            position: fixed;
+            top: 1px;
+            left: 8px;
+            background-color: #ff2c2c;
+            color: white;
+            border: none;
+            padding: 6px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 1000;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .closeButton:hover {
+            background-color: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        /* تصميم Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px; /* المسافة من أسفل الصفحة */
+            left: 50%; /* توسيط الـ Toast على الصفحة */
+            transform: translateX(-50%); /* لضمان التوسيط التام */
+            background-color: rgba(0, 0, 0, 0.7); /* اللون الخلفي للـ Toast */
+            color: white; /* لون النص */
+            padding: 10px 20px; /* المسافة حول النص */
+            border-radius: 5px; /* حواف دائرية */
+            font-size: 16px; /* حجم الخط */
+            z-index: 9999; /* لضمان أن الـ Toast يظهر فوق كل العناصر الأخرى */
+            opacity: 0; /* يبدأ الشفافية من 0 */
+            animation: fadeInOut 3s forwards; /* تطبيق الحركة */
+        }
+
+        /* حركة ظهور واختفاء الـ Toast */
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0; /* يبدأ شفافاً */
+                transform: translateX(-50%) translateY(10px); /* يبدأ أسفل قليلاً */
+            }
+            20% {
+                opacity: 1; /* يظهر بالكامل */
+                transform: translateX(-50%) translateY(0); /* يعود لمكانه الصحيح */
+            }
+            80% {
+                opacity: 1; /* يبقى مرئياً */
+            }
+            100% {
+                opacity: 0; /* يختفي في النهاية */
+                transform: translateX(-50%) translateY(10px); /* يتحرك للأسفل قليلاً أثناء اختفائه */
+            }
+        }
+    </style>
+</head>
+ 
+</div>
+     <div class="datetime-container">
+        <div id="datetime"></div>
+        <button class="closeButton" onclick="redirectToLogin()">إغلاق</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+           <img src="https://pmlg.netlify.app/logo1.png" alt="Left Logo">
+           <h1>MUSTAFA مصطفى</h1>
+           <img src="https://pmlg.netlify.app/logo0.png" alt="Right Logo">
+        </div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="ابحث عن منتج...">
+        <button id="search-button">بحث</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" id="view-products-tab">عرض المنتجات</button>
+        <button class="tab" id="add-product-tab">إضافة منتج جديد</button>
+        <button class="tab" id="download-products-tab">تحميل المنتجات</button>
+        <button class="tab" id="download-pdf">تحميل PDF</button>
+    </div>
+
+    <div id="view-products-content" class="content active">
+        <table>
+            <thead>
+                <tr>
+                    <th>الصور</th>
+                    <th>إسم المنتج</th>
+                    <th>الكمية</th>
+                    <th>السعر</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="product-list">
+                <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="add-product-content" class="content">
+        <form id="add-product-form">
+            <label for="product-name">اسم المنتج:</label>
+            <input type="text" id="product-name" name="product-name" required>
+
+            <label for="product-quantity">الكمية:</label>
+            <input type="number" id="product-quantity" name="product-quantity" value="" required>
+
+            <label for="product-price">السعر:</label>
+            <input type="number" id="product-price" name="product-price" required>
+
+            <label for="product-image">رابط صورة المنتج:</label>
+            <input type="text" id="product-image" name="product-image" required>
+
+            <button type="submit">إضافة</button>
+        </form>
+    </div>
+
+   <div id="toast" class="toast">تم تنفيذ العملية بنجاح!</div>
+
+
+<!-- Firebase SDK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDuPk138vyAdZ_rEBRU5tiRvF8FsuV0DoY",
+        authDomain: "storage-10327.firebaseapp.com",
+        databaseURL: "https://storage-10327-default-rtdb.firebaseio.com",
+        projectId: "storage-10327",
+        storageBucket: "storage-10327.appspot.com",
+        messagingSenderId: "1041438906209",
+        appId: "1:1041438906209:web:a300edc79b04c59fd79720",
+        measurementId: "G-N9X47M4D0C"
+    };
+
+    // Firebase initialization
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const analytics = getAnalytics(app);
+
+// Organizing Firebase Operations
+function getProductsRef() {
+    return ref(database, 'products');
+}
+
+function getProductByName(productName) {
+    return get(getProductsRef()).then(snapshot => {
+        if (snapshot.exists()) {
+            const products = snapshot.val();
+            return Object.entries(products).find(([id, product]) => product.name === productName);
+        }
+        return null;
+    });
+}
+
+function addProductToDatabase(product) {
+    const productRef = ref(database, 'products/' + Date.now());
+    return set(productRef, product);
+}
+
+function updateProductInDatabase(id, product) {
+    const productRef = ref(database, 'products/' + id);
+    return set(productRef, product);
+}
+
+function deleteProductFromDatabase(id) {
+    return remove(ref(database, 'products/' + id));
+}
+
+function duplicateProductInDatabase(product) {
+    const newProductRef = ref(database, 'products/' + Date.now());
+    return set(newProductRef, { ...product });
+}
+
+// Function to redirect to login page
+window.redirectToLogin = function () {
+    if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
+        window.location.href = "index.html";
+    }
+};
+
+// Function to show Toast notification
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000); // Dismiss after 3 seconds
+}
+
+// Execute operations on page load
+document.addEventListener('DOMContentLoaded', function () {
+    displayProducts();
+});
+
+// Elements and references
+const addProductForm = document.getElementById('add-product-form');
+const productList = document.getElementById('product-list');
+const searchInput = document.getElementById('search-input');
+let editIndex = -1;
+
+// Add or edit product
+addProductForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const productName = document.getElementById('product-name').value.trim();
+    const productQuantity = parseInt(document.getElementById('product-quantity').value);
+    const productPrice = parseFloat(document.getElementById('product-price').value);
+    const productImage = document.getElementById('product-image').value;
+
+    if (productName && productQuantity > 0 && productPrice >= 0 && productImage) {
+        // If adding a new product (editIndex is -1)
+        if (editIndex === -1) {
+            getProductByName(productName).then(existingProduct => {
+                if (existingProduct) {
+                    showToast('هذا المنتج موجود بالفعل. تم ملء الحقول تلقائيًا.', 'warning');
+                    const [productId, productData] = existingProduct;
+                    document.getElementById('product-name').value = productData.name;
+                    document.getElementById('product-quantity').value = productData.quantity;
+                    document.getElementById('product-price').value = productData.price;
+                    document.getElementById('product-image').value = productData.image;
+                    editIndex = productId;
+                    return;
+                }
+
+                const product = { name: productName, quantity: productQuantity, price: productPrice, image: productImage };
+                addProductToDatabase(product)
+                    .then(() => {
+                        showToast('تم إضافة المنتج بنجاح', 'success');
+                        displayProducts();
+                        switchTab('view-products');
+                        addProductForm.reset();
+                    })
+                    .catch(error => {
+                        console.error("Error saving product: ", error);
+                        showToast('حدث خطأ أثناء حفظ المنتج.', 'error');
+                    });
+            }).catch(error => {
+                console.error("Error checking products: ", error);
+                showToast('حدث خطأ أثناء التحقق من المنتجات.', 'error');
+            });
+        } else {
+            // Edit existing product
+            const product = { name: productName, quantity: productQuantity, price: productPrice, image: productImage };
+
+            updateProductInDatabase(editIndex, product)
+                .then(() => {
+                    showToast('تم تعديل المنتج بنجاح', 'success');
+                    editIndex = -1;
+                    displayProducts();
+                    switchTab('view-products');
+                    addProductForm.reset();
+                })
+                .catch(error => {
+                    console.error("Error updating product: ", error);
+                    showToast('حدث خطأ أثناء تعديل المنتج.', 'error');
+                });
+        }
+    } else {
+        showToast('يرجى ملء جميع الحقول بشكل صحيح', 'error');
+    }
+});
+
+// Search for products
+document.getElementById('search-button')?.addEventListener('click', function () {
+    const searchTerm = searchInput.value.toLowerCase();
+    displayProducts(searchTerm);
+});
+
+// Display products
+function displayProducts(searchTerm = '') {
+    productList.innerHTML = '<tr><td colspan="5">جاري تحميل البيانات...</td></tr>';
+    get(getProductsRef())
+        .then(snapshot => {
+            productList.innerHTML = '';
+            if (snapshot.exists()) {
+                const products = snapshot.val();
+                for (const id in products) {
+                    const product = products[id];
+                    if (product.name.toLowerCase().includes(searchTerm)) {
+                        const row = document.createElement('tr');
+
+                        const imageCell = document.createElement('td');
+                        const img = document.createElement('img');
+                        img.src = product.image;
+                        img.alt = product.name;
+                        img.classList.add('product-image');
+                        imageCell.appendChild(img);
+                        row.appendChild(imageCell);
+
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = product.name;
+                        row.appendChild(nameCell);
+
+                        const quantityCell = document.createElement('td');
+                        quantityCell.textContent = product.quantity;
+                        row.appendChild(quantityCell);
+
+                        const priceCell = document.createElement('td');
+                        priceCell.textContent = product.price.toFixed(2);
+                        row.appendChild(priceCell);
+
+                        const actionsCell = document.createElement('td');
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'تعديل';
+                        editButton.addEventListener('click', function () {
+                            editIndex = id;
+                            document.getElementById('product-name').value = product.name;
+                            document.getElementById('product-quantity').value = product.quantity;
+                            document.getElementById('product-price').value = product.price;
+                            document.getElementById('product-image').value = product.image;
+                            switchTab('add-product');
+                        });
+                        actionsCell.appendChild(editButton);
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'حذف';
+                        deleteButton.addEventListener('click', function () {
+                            if (confirm('هل أنت متأكد من الحذف؟')) {
+                                deleteProductFromDatabase(id)
+                                    .then(() => {
+                                        showToast('تم حذف المنتج بنجاح', 'success');
+                                        displayProducts();
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error removing product: ", error);
+                                        showToast('حدث خطأ أثناء حذف المنتج', 'error');
+                                    });
+                            }
+                        });
+                        actionsCell.appendChild(deleteButton);
+
+                        const duplicateButton = document.createElement('button');
+                        duplicateButton.textContent = 'نسخ';
+                        duplicateButton.addEventListener('click', function () {
+                            duplicateProductInDatabase(product)
+                                .then(() => {
+                                    showToast('تم نسخ المنتج بنجاح', 'success');
+                                    displayProducts();
+                                })
+                                .catch((error) => {
+                                    console.error("Error duplicating product: ", error);
+                                    showToast('حدث خطأ أثناء نسخ المنتج', 'error');
+                                });
+                        });
+                        actionsCell.appendChild(duplicateButton);
+
+                        row.appendChild(actionsCell);
+                        productList.appendChild(row);
+                    }
+                }
+            } else {
+                productList.innerHTML = '<tr><td colspan="5">لا توجد منتجات لعرضها.</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching products: ", error);
+            productList.innerHTML = '<tr><td colspan="5">حدث خطأ أثناء تحميل البيانات.</td></tr>';
+        });
+}
+
+// Switch between tabs
+function switchTab(tab) {
+    const viewProductsContent = document.getElementById('view-products-content');
+    const addProductContent = document.getElementById('add-product-content');
+    const viewProductsTab = document.getElementById('view-products-tab');
+    const addProductTab = document.getElementById('add-product-tab');
+
+    if (tab === 'view-products') {
+        viewProductsContent?.classList.add('active');
+        addProductContent?.classList.remove('active');
+        viewProductsTab?.classList.add('active');
+        addProductTab?.classList.remove('active');
+    } else {
+        viewProductsContent?.classList.remove('active');
+        addProductContent?.classList.add('active');
+        viewProductsTab?.classList.remove('active');
+        addProductTab?.classList.add('active');
+    }
+}
+
+document.getElementById('view-products-tab')?.addEventListener('click', function () {
+    switchTab('view-products');
+});
+
+document.getElementById('add-product-tab')?.addEventListener('click', function () {
+    switchTab('add-product');
+});
+
+// تحديث التاريخ والوقت
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    let date = now.toLocaleDateString('ar-EG', options);
+    let time = now.toLocaleTimeString('ar-EG');
+
+    // تحويل الأرقام العربية إلى أرقام إنجليزية
+    date = convertArabicNumbersToEnglish(date);
+    time = convertArabicNumbersToEnglish(time);
+
+    const datetimeElement = document.getElementById('datetime');
+    if (datetimeElement) {
+        datetimeElement.textContent = `${date} ${time}`;
+    }
+}
+
+// تحويل الأرقام العربية إلى أرقام إنجليزية
+function convertArabicNumbersToEnglish(input) {
+    return input.replace(/[٠١٢٣٤٥٦٧٨٩]/g, d => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(d)]);
+}
+
+// تحديث الوقت كل ثانية
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+// تحسينات لتحميل وتنزيل الملفات
+// وظيفة لإنشاء رابط وتنزيل ملف
+function createDownloadLink(content, fileName, mimeType) {
+    const link = document.createElement("a");
+    link.setAttribute("href", `data:${mimeType};charset=utf-8,` + encodeURIComponent(content));
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// وظيفة لإنشاء ملف CSV
+function generateCsv(products) {
+    let csvContent = "الصور,إسم المنتج,الكمية,السعر\n";
+    Object.keys(products).forEach(key => {
+        const product = products[key];
+        csvContent += `"${product.image}","${product.name}","${product.quantity}","${product.price}"\n`;
+    });
+    return csvContent;
+}
+
+// تحميل CSV عند الضغط على الزر
+document.getElementById('download-products-tab').addEventListener('click', function () {
+    const productsRef = ref(database, 'products');
+    get(productsRef).then(snapshot => {
+        if (snapshot.exists()) {
+            const products = snapshot.val();
+            const csvContent = generateCsv(products);
+            createDownloadLink(csvContent, "products.csv", "text/csv");
+        } else {
+            showToast('لا توجد منتجات لتنزيلها.');
+        }
+    }).catch(error => {
+        console.error('Error fetching products: ', error);
+        showToast('حدث خطأ أثناء تحميل المنتجات.');
+    });
+});
+document.getElementById('download-pdf').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    const tableRows = [];
+    const tableColumns = ['Nom du produit', 'Quantité', 'Prix']; // الأعمدة في الجدول
+
+    // استخراج البيانات من الجدول
+    const tableData = document.querySelectorAll('#product-list tr');
+
+    tableData.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length > 0) {
+            const name = cells[1]?.textContent?.trim() || 'N/A'; // اسم المنتج
+            const quantity = cells[2]?.textContent?.trim() || '0'; // الكمية
+            const price = cells[3]?.textContent?.trim() || '0.00'; // السعر
+            tableRows.push([name, quantity, price]);
+        }
+    });
+
+    // التحقق من وجود بيانات لإنشاء الـ PDF
+    if (tableRows.length === 0) {
+        showToast('لا توجد بيانات لإنشاء ملف PDF');
+        return;
+    }
+
+    // عرض رسالة Toast
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    const img = new Image();
+    img.src = 'background.png'; // تأكد من وجود ملف الخلفية في المسار الصحيح
+    img.onload = function () {
+        const pageWidth = pdf.internal.pageSize.width;
+        const pageHeight = pdf.internal.pageSize.height;
+
+        let startIndex = 0;
+        const currentDate = new Date().toLocaleDateString('fr-FR'); // تنسيق التاريخ الحالي
+
+        // تقسيم البيانات إلى صفحات متعددة في حال كان هناك الكثير من المنتجات
+        while (startIndex < tableRows.length) {
+            if (startIndex > 0) pdf.addPage(); // إضافة صفحة جديدة إذا كانت هناك بيانات إضافية
+
+            // إضافة صورة الخلفية إلى كل صفحة
+            pdf.addImage(img, 'JPEG', 0, 0, pageWidth, pageHeight);
+            pdf.setFontSize(30);
+            pdf.setTextColor(255, 255, 255);
+            pdf.text('Liste des produits', pageWidth / 2, 30, { align: 'center' }); // عنوان الملف
+
+            // إنشاء الجدول داخل الـ PDF
+            pdf.autoTable({
+                head: [tableColumns],
+                body: tableRows.slice(startIndex, startIndex + 25), // تقسيم البيانات إلى 25 صف في الصفحة
+                theme: 'grid',
+                startY: 45, // تحديد بداية الجدول على الصفحة
+                styles: {
+                    fontSize: 12,
+                    textColor: [0, 0, 0],
+                    fillColor: [180, 180, 180],
+                    lineColor: [255, 255, 255],
+                    lineWidth: 0.3,
+                },
+                headStyles: {
+                    fillColor: [255, 0, 0], // اللون الخلفي للعنوان
+                    textColor: [255, 255, 0], // اللون النصي للعنوان
+                    fontStyle: 'bold',
+                },
+            });
+
+            // إضافة التاريخ في أسفل الصفحة
+            pdf.setFontSize(16);
+            pdf.setTextColor(255, 255, 255);
+            pdf.text(currentDate, pageWidth - 32, pageHeight - 6); // إضافة التاريخ في أسفل اليمين
+
+            startIndex += 25; // الانتقال إلى مجموعة بيانات أخرى
+        }
+
+        // حفظ الـ PDF
+        pdf.save('Liste-des-produits.pdf');
+        showToast('تم إنشاء ملف PDF بنجاح');
+    };
+
+    img.onerror = function () {
+        showToast('فشل تحميل الخلفية'); // إذا فشل تحميل صورة الخلفية
+    };
+});
+    </script>
+</body>
+</html>

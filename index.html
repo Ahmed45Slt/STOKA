@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        /* إعدادات الخطوط */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #030683, #26c6dac1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+        .login-container {
+            background: #ffffff47;
+            border-radius: 25px;
+            padding: 20px;
+            width: 280px;
+            box-shadow: 0 8px 5px rgba(252,46,46,0.446);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .login-container img {
+            width: 100px;
+            margin-bottom: 15px;
+            animation: flipLogo 7s infinite linear;
+        }
+        .login-container h1 {
+            margin-bottom: 5px;
+            font-size: 30px;
+            color: #ddeb02;
+            text-shadow: 0 2px 5px rgba(176,0,0,0.887);
+        }
+        .login-container .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 14px;
+            padding-right: 40px; /* مساحة للأيقونة */
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .login-container input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(255,255,255,0.453);
+        }
+        .login-container .input-group i {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #88888862;
+            cursor: pointer;
+        }
+        .login-container .input-group i:hover {
+            color: #33333356;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #009515f1;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .login-container button:hover {
+            background: #eb0404;
+            transform: translateY(-2px);
+        }
+        .login-container button:active {
+            transform: translateY(1px);
+        }
+        .login-container p {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ffffff86;
+        }
+        .login-container p a {
+            color: #4900ff;
+            text-decoration: none;
+        }
+        .login-container p a:hover {
+            text-decoration: underline;
+        }
+
+        /* رسائل الخطأ */
+        .error {
+            color: red;
+            font-size: 15px;
+            display: none;
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* مؤشر التحميل */
+        #loadingSpinner {
+            display: none;
+        }
+
+        /* تحسين تجربة الأجهزة المحمولة */
+        @media (max-width: 600px) {
+            .login-container {
+                width: 80%;
+            }
+            .login-container input,
+            .login-container button {
+                width: 100%;
+            }
+        }
+
+        /* إضافة تأثيرات على الأيقونة */
+        @keyframes flipLogo {
+            0% {
+                transform: rotateY(0deg);
+            }
+            50% {
+                transform: rotateY(180deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+    <img src="https://pmlg.netlify.app/logo1.png" alt="شعار">
+    <h1>تسجيل الدخول</h1>
+    <div class="input-group">
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <i id="username-icon" class="fas fa-user"></i>
+        <span id="username-error" class="error">يرجى إدخال اسم المستخدم</span>
+    </div>
+    <div class="input-group">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <i id="togglePassword" class="fas fa-eye"></i>
+        <span id="password-error" class="error">يرجى إدخال كلمة المرور</span>
+    </div>
+    <button id="loginButton">تسجيل الدخول</button>
+    <div id="loadingSpinner">
+        <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading...">
+    </div>
+    <p>نسيت كلمة المرور؟ <a href="#">اضغط هنا</a></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="module">
+    // إعداد Firebase
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+    import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBVD6BwwCMAmuVFf5ip-H-J6NdhX2k_1k0",
+        authDomain: "storage-1-84b28.firebaseapp.com",
+        databaseURL: "https://storage-1-84b28-default-rtdb.firebaseio.com",
+        projectId: "storage-1-84b28",
+        storageBucket: "storage-1-84b28.appspot.com",
+        messagingSenderId: "681051266815",
+        appId: "1:681051266815:web:03d077b10527af649b76ca"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // عرض رسائل الخطأ باستخدام toastr
+function showError(message) {
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-center",
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "3000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut"
+    };
+    toastr.error(message);
+}
+
+// تسجيل الدخول
+async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const usernameError = document.getElementById('username-error');
+    const passwordError = document.getElementById('password-error');
+
+    // التحقق من الحقول
+    if (username === '') {
+        showError('يرجى إدخال اسم المستخدم');
+        return;
+    } else {
+        usernameError.style.display = 'none';
+    }
+
+    if (password === '') {
+        showError('يرجى إدخال كلمة المرور');
+        return;
+    } else {
+        passwordError.style.display = 'none';
+    }
+
+    // عرض مؤشر التحميل
+    document.getElementById('loadingSpinner').style.display = 'inline';
+    document.getElementById('loginButton').style.display = 'none';
+
+    try {
+        const dbRef = ref(database, 'users/' + username);
+        const snapshot = await get(dbRef);
+
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            if (userData.password === password) {
+                if (userData.status === 'active') {
+                    toastr.success('تم تسجيل الدخول بنجاح!');
+                    // التحقق من الدور (admin أو employee)
+                    setTimeout(() => {
+                        if (userData.role === 'admin') {
+                            window.location.href = "admin.html"; // صفحة المدير
+                        } else {
+                            window.location.href = "inventory.html"; // صفحة الموظف
+                        }
+                    }, 1500);
+                } else {
+                    showError('تم إيقاف حسابك. يرجى التواصل مع المدير.');
+                }
+            } else {
+                showError('كلمة المرور غير صحيحة!');
+            }
+        } else {
+            showError('اسم المستخدم غير موجود!');
+        }
+    } catch (error) {
+        console.error('خطأ أثناء تسجيل الدخول:', error);
+        showError('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى لاحقًا.');
+    } finally {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('loginButton').style.display = 'inline';
+    }
+}
+
+// إضافة مستمع لحدث الضغط على زر تسجيل الدخول
+document.getElementById('loginButton').addEventListener('click', login);
+// وظيفة لتبديل إظهار كلمة المرور
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const passwordField = document.getElementById('password');
+    const icon = this; // الإشارة إلى العنصر الذي تم النقر عليه (togglePassword)
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+    </script>
+</body>
+</html>
